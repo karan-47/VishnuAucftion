@@ -16,6 +16,7 @@ class EmployeeRepository {
   }
 
   async update(sap_id, employee) {
+    console.log(sap_id, employee, "to be updated");
     return await Employee.update(employee, { where: { sap_id } });
   }
 
