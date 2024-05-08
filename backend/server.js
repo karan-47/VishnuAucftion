@@ -21,7 +21,7 @@ const server = http.createServer(app);
 // Create socket using the instance
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000","http://localhost:5000"],
     methods: ["GET", "POST"],
     allowedHeaders: ["my-custom-header"],
     credentials: true
@@ -29,13 +29,36 @@ const io = socketIo(server, {
 });
 
 
+// Import EmployeeRepository
+const EmployeeRepository = require('./repositories/EmployeeRepository');
+
+let acceptBids = true
+
 io.on('connection', (socket) => {
   console.log('New client connected');
 
   // Handle bid event
-  socket.on('bid', (data) => {
+  socket.on('bid', async (data) => {
+    if (!acceptBids) return; 
     console.log('Bid received:', data);
+
+    // Get the productivity score of the employee who made the bid
+    const employee = await EmployeeRepository.getById(data.sap_id);
+    const productivityScore = employee ? employee.productivity_score : null;
+    console.log('Productivity score:', productivityScore);
+
+    // Add the productivity score to the bid data
+    data.productivity_score = productivityScore;
+
+    // Broadcast the bid data to all other clients
     socket.broadcast.emit('bid', data);
+  });
+
+
+
+  socket.on('endBid', () => {
+    acceptBids = false; // Stop accepting new bids
+    console.log('Bid ended');
   });
 
   socket.on('disconnect', () => {
