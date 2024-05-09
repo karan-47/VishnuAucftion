@@ -86,23 +86,14 @@ const Admin = () => {
       }
       setFinalAssignment(bidsArray)
     });
-
+    alert("Employees notified about bid results")
   };
 
   useEffect(() => {
     const newSocket = io('http://localhost:8080');
     setSocket(newSocket);
     
-    socket.on('finalAssignments', data => {
-      console.log(data);
-      setBids([])
-      
-      let bidsArray = [];
-      for (let item in data ){
-        bidsArray.push({id:item, team:data[item]})
-      }
-      setFinalAssignment(bidsArray)
-    });
+    
     return () => newSocket.close();
   }, []);
 

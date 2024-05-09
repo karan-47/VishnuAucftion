@@ -43,7 +43,8 @@ io.on('connection', (socket) => {
 
   // Handle bid event
   socket.on('bid', async (data) => {
-    if (!acceptBids) return; 
+    if (!acceptBids) 
+      socket.broadcast.emit('error', "NO"); 
     console.log('Bid received:', data);
 
     let productivityScore;
