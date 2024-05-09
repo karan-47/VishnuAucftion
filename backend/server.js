@@ -25,7 +25,7 @@ const server = http.createServer(app);
 // Create socket using the instance
 const io = socketIo(server, {
   cors: {
-    origin: ["http://localhost:3000","http://localhost:5000","http://localhost:3001","http://localhost:3002"],
+    origin: ["http://localhost:3000","http://localhost:5000","http://localhost:3001","http://localhost:3002","*","http://localhost:3003"],
     methods: ["GET", "POST"],
     allowedHeaders: ["my-custom-header"],
     credentials: true
@@ -130,6 +130,10 @@ io.on('connection', (socket) => {
       }
     }
 
+    teams = {};
+    employeeMap = {};
+    bidMap = {};
+
     // update the database
   
     console.log('Bid ended');
@@ -141,6 +145,7 @@ io.on('connection', (socket) => {
 
   socket.on('printTeams', () => {
     console.log(teams);
+    socket.emit('getBids', teams);
   });
 
   socket.on('finalTeams', async () => {
